@@ -11,8 +11,10 @@ export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '../..');
 export const DATA_DIR = join(ROOT, 'data');
 export const PUBLIC_DATA = join(ROOT, 'public/data');
 
-export const SITE = 'https://www.masterwhats.com.br';
-export const REPO = 'https://github.com/rafaelbressan/masterzap';
+// Where the site is published. SITE_URL overrides for another host — a GitHub
+// Pages fork, say — and src/lib/base.js turns its pathname into the base path.
+export const SITE = (process.env.SITE_URL || 'https://www.masterwhats.com.br').replace(/\/+$/, '');
+export const REPO = (process.env.REPO_URL || 'https://github.com/rafaelbressan/masterzap').replace(/\/+$/, '');
 
 // The phones were seized in Brazil and every timestamp in the sources is local
 // wall-clock time. Brazil has had no daylight saving since 2019, so from the

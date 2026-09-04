@@ -8,6 +8,7 @@
  *    then linkify() wraps plain-text URLs in <a> tags. This is safe
  *    because the input to linkify is already fully escaped.
  */
+import { withBase } from '../lib/base.js';
 import { escapeHtml, formatTime, formatDateLong, linkify } from '../lib/utils.js';
 import { ScrollLoader } from '../lib/scroll-loader.js';
 import { ICON_INFO, ICON_SEARCH, ICON_CHECKEMPTY, ICON_BELL, ICON_TIMER, ICON_DOWNLOAD, ICON_CLOSE_CIRCULAR, ICON_MASTERZAP_LOGO, ICON_MEETBALL, ICON_CHEVRON_DW, ICON_SCREENSHOT } from '../lib/icons.js';
@@ -24,8 +25,8 @@ import { showContactsSheet, ICON_MESSAGE } from './ContactsSheet.js';
 let media = { conversations: [], avatarFor: () => null, selfAvatar: null, contactAvatar: null, contactName: '', onOpenChat: () => {}, onCopy: () => {}, container: null };
 
 const ICON_PLAY = `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
-const MAP_PLACEHOLDER = '/assets/map-placeholder.jpg';
-const MAP_PIN = '/assets/map-pin.jpg';
+const MAP_PLACEHOLDER = withBase('/assets/map-placeholder.jpg');
+const MAP_PIN = withBase('/assets/map-pin.jpg');
 
 const BACK_ICON = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>`;
 

@@ -6,6 +6,8 @@
  * and normalize accents for broader matching.
  */
 
+import { withBase } from './base.js';
+
 let _index = null;
 let _indexId = null;
 let _loading = null;
@@ -18,10 +20,10 @@ let _loadingId = null;
  * to refetch, or a search in one conversation would return hits from another.
  *
  * @param {string} conversationId
- * @param {string} [basePath='/data']
+ * @param {string} [basePath] - defaults to /data under the site's base path
  * @returns {Promise<Array>}
  */
-export async function loadSearchIndex(conversationId, basePath = '/data') {
+export async function loadSearchIndex(conversationId, basePath = withBase('/data')) {
   if (_index && _indexId === conversationId) return _index;
   if (_loading && _loadingId === conversationId) return _loading;
 
