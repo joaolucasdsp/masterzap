@@ -11,9 +11,10 @@ export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '../..');
 export const DATA_DIR = join(ROOT, 'data');
 export const PUBLIC_DATA = join(ROOT, 'public/data');
 
-// Where the site is published. SITE_URL overrides for another host — a GitHub
-// Pages fork, say — and src/lib/base.js turns its pathname into the base path.
-export const SITE = (process.env.SITE_URL || 'https://www.masterwhats.com.br').replace(/\/+$/, '');
+// Where the site is published (SITE_URL, or the canonical host) — shared with
+// the app, which derives the base path from it.
+import { SITE } from '../../src/lib/base.js';
+export { SITE };
 export const REPO = (process.env.REPO_URL || 'https://github.com/rafaelbressan/masterzap').replace(/\/+$/, '');
 
 // The phones were seized in Brazil and every timestamp in the sources is local

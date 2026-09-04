@@ -8,9 +8,14 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync, existsSync, statSync, readdirSync } from 'fs';
 import { join } from 'path';
 
+import { SITE } from '../../scripts/lib/corpus.mjs';
+import { basePathOf } from '../../src/lib/base.js';
+
 const ROOT = join(import.meta.dirname, '../..');
 const DIST = join(ROOT, 'dist');
-const SITE = 'https://www.masterwhats.com.br';
+// The build under test was made for SITE (SITE_URL, or the canonical host) and
+// its pages link under BASE — '/' there, '/<repo>/' on GitHub Pages.
+const BASE = basePathOf(process.env.SITE_URL);
 
 const conversations = JSON.parse(
   readFileSync(join(ROOT, 'public/data/conversations.json'), 'utf-8')
@@ -111,8 +116,8 @@ describe('discovery', () => {
   // A crawler should not have to guess that llms.txt exists.
   it('the home page and robots.txt point at llms.txt', () => {
     const home = readFileSync(join(DIST, 'index.html'), 'utf-8');
-    expect(home).toContain('<link rel="alternate" type="text/plain" href="/llms.txt"');
-    expect(home).toContain('href="/llms-full.txt"');
+    expect(home).toContain(`<link rel="alternate" type="text/plain" href="${BASE}llms.txt"`);
+    expect(home).toContain(`href="${BASE}llms-full.txt"`);
     const robots = readFileSync(join(ROOT, 'public/robots.txt'), 'utf-8');
     expect(robots).toContain('/llms.txt');
   });
@@ -125,14 +130,14 @@ describe('a conversation too big for one page', () => {
     expect(months.length).toBeGreaterThan(12);
     const main = page('martha-graeff');
     expect(main).toContain('<h2>Meses</h2>');
-    for (const ym of months) expect(main, ym).toContain(`<a href="/chat/martha-graeff/${ym}">`);
+    for (const ym of months) expect(main, ym).toContain(`<a href="${BASE}chat/martha-graeff/${ym}">`);
   });
 
   it('holds only that month, in order, chained to its neighbours', () => {
     const html = readFileSync(join(DIST, 'chat/martha-graeff/2024-12/index.html'), 'utf-8');
-    expect(html).toContain('<link rel="canonical" href="https://www.masterwhats.com.br/chat/martha-graeff/2024-12">');
-    expect(html).toContain('<link rel="prev" href="https://www.masterwhats.com.br/chat/martha-graeff/2024-11">');
-    expect(html).toContain('<link rel="next" href="https://www.masterwhats.com.br/chat/martha-graeff/2025-01">');
+    expect(html).toContain(`<link rel="canonical" href="${SITE}/chat/martha-graeff/2024-12">`);
+    expect(html).toContain(`<link rel="prev" href="${SITE}/chat/martha-graeff/2024-11">`);
+    expect(html).toContain(`<link rel="next" href="${SITE}/chat/martha-graeff/2025-01">`);
     const stamps = [...html.matchAll(/<time datetime="(\d{4}-\d{2})-\d{2}T/g)].map(m => m[1]);
     expect(stamps.length).toBeGreaterThan(100);
     expect(new Set(stamps)).toEqual(new Set(['2024-12']));
@@ -146,7 +151,7 @@ describe('a conversation too big for one page', () => {
   // anchor is on the month page, and the home page's highlight points there.
   it('anchors the message on its month page, where the home page points', () => {
     expect(readFileSync(join(DIST, 'chat/martha-graeff/2024-12/index.html'), 'utf-8')).toContain('<p id="msg-35686">');
-    expect(readFileSync(join(DIST, 'index.html'), 'utf-8')).toContain('href="/chat/martha-graeff/2024-12#msg-35686"');
+    expect(readFileSync(join(DIST, 'index.html'), 'utf-8')).toContain(`href="${BASE}chat/martha-graeff/2024-12#msg-35686"`);
   });
 
   // A static anchor link must work for a browser too: the page opens the app
@@ -161,8 +166,8 @@ describe('people', () => {
 
   it('has an index and a page per person', () => {
     const index = readFileSync(join(DIST, 'quem/index.html'), 'utf-8');
-    expect(index).toContain('<a href="/quem/paulo-gonet">Paulo Gonet</a>');
-    expect(index).toContain('<a href="/quem/andre-esteves">André Esteves</a>');
+    expect(index).toContain(`<a href="${BASE}quem/paulo-gonet">Paulo Gonet</a>`);
+    expect(index).toContain(`<a href="${BASE}quem/andre-esteves">André Esteves</a>`);
   });
 
   it('lists every mention by conversation, dated, pointing at the message', () => {
@@ -174,8 +179,8 @@ describe('people', () => {
     // The son is not the father.
     expect(html).not.toContain('Pedro Gonet');
     expect(html).toContain('Daniel Vorcaro ↔ Ciro Soares</a>');
-    expect(html).toContain('href="/chat/ciro-soares#msg-34"');
-    expect(html).toContain('href="https://www.masterwhats.com.br/#/chat/ciro-soares/msg/34"');
+    expect(html).toContain(`href="${BASE}chat/ciro-soares#msg-34"`);
+    expect(html).toContain(`href="${SITE}/#/chat/ciro-soares/msg/34"`);
     expect(html).toContain('laudo p. 207, fig. 219');
     expect(html).toMatch(/<time datetime="2025-03-29T13:58:\d{2}-03:00">29\/03\/2025 13:58<\/time>/);
   });
@@ -185,7 +190,7 @@ describe('people', () => {
   });
 
   it('points a mention in the big conversation at its month page', () => {
-    expect(person('andre-esteves')).toMatch(/href="\/chat\/martha-graeff\/\d{4}-\d{2}#msg-\d+"/);
+    expect(person('andre-esteves')).toMatch(new RegExp(`href="${BASE.replace(/\//g, '\\/')}chat\\/martha-graeff\\/\\d{4}-\\d{2}#msg-\\d+"`));
   });
 
   it('describes the page as being about a Person', () => {

@@ -543,7 +543,7 @@ const rawRepo = REPO.startsWith('https://github.com/') ? REPO.replace('https://g
 const notFound = template.replace('</head>', (rawRepo ? `<script>(function(){var p=location.pathname,i=p.indexOf('/data/source/');if(i>=0)location.replace(${JSON.stringify(rawRepo)}+p.slice(i));})();</script>\n` : '') + '</head>');
 writeFileSync(join(DIST, '404.html'), notFound);
 writeFileSync(join(DIST, '.nojekyll'), '');
-writeFileSync(join(DIST, 'robots.txt'), readFileSync(join(DIST, 'robots.txt'), 'utf-8').replaceAll('https://www.masterwhats.com.br', SITE));
+writeFileSync(join(DIST, 'robots.txt'), rebaseHtml(readFileSync(join(DIST, 'robots.txt'), 'utf-8')));
 const manifest = JSON.parse(readFileSync(join(DIST, 'site.webmanifest'), 'utf-8'));
 manifest.start_url = BASE;
 for (const icon of manifest.icons) icon.src = BASE + icon.src.replace(/^\/+/, '');
