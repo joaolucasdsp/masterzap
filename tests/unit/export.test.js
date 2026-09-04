@@ -1,10 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { exportUrl, EXPORT_ALL_URL, downloadFile } from '../../src/lib/export.js';
+import { BASE } from '../../src/lib/base.js';
 
 describe('exportUrl', () => {
   it('points at the file the build writes', () => {
-    expect(exportUrl('alexandre-de-moraes', 'md')).toBe('/export/masterwhats-alexandre-de-moraes.md');
-    expect(exportUrl('martha-graeff', 'json')).toBe('/export/masterwhats-martha-graeff.json');
+    expect(exportUrl('alexandre-de-moraes', 'md')).toBe(`${BASE}export/masterwhats-alexandre-de-moraes.md`);
+    expect(exportUrl('martha-graeff', 'json')).toBe(`${BASE}export/masterwhats-martha-graeff.json`);
   });
 
   it('refuses a format the build does not produce', () => {
@@ -12,7 +13,7 @@ describe('exportUrl', () => {
   });
 
   it('has one zip for everything', () => {
-    expect(EXPORT_ALL_URL).toBe('/export/masterwhats-export.zip');
+    expect(EXPORT_ALL_URL).toBe(`${BASE}export/masterwhats-export.zip`);
   });
 });
 

@@ -23,6 +23,12 @@ export function basePathOf(siteUrl) {
   return new URL(siteUrl).pathname.replace(/\/*$/, '/');
 }
 
+/** Where the canonical site lives; index.html and the hand-written files name it. */
+export const CANONICAL_SITE = 'https://www.masterwhats.com.br';
+
+/** Where this build is published — SITE_URL, or the canonical site. No trailing slash. */
+export const SITE = (globalThis.process?.env?.SITE_URL || CANONICAL_SITE).replace(/\/+$/, '');
+
 /** '/' at the root; '/masterzap/' under a project site. */
 export const BASE = (viteEnv && viteEnv.BASE_URL) || basePathOf(globalThis.process?.env?.SITE_URL);
 
@@ -30,11 +36,14 @@ export const BASE = (viteEnv && viteEnv.BASE_URL) || basePathOf(globalThis.proce
 export const withBase = (path, base = BASE) => base + String(path).replace(/^\/+/, '');
 
 /**
- * Rewrites the root-relative href/src attributes of generated HTML to live
- * under BASE. Attributes already under BASE (Vite rewrote them) and protocol-
- * relative URLs are left alone. A no-op at the root.
+ * Makes generated HTML belong to this build's site: root-relative href/src
+ * attributes move under the base path, and absolute URLs naming the canonical
+ * host are re-pointed at the site. Attributes already under the base (Vite
+ * rewrote them) and protocol-relative URLs are left alone. A no-op at the
+ * canonical site.
  */
-export function rebaseHtml(html, base = BASE) {
+export function rebaseHtml(html, base = BASE, site = SITE) {
+  if (site !== CANONICAL_SITE) html = html.replaceAll(CANONICAL_SITE, site);
   if (base === '/') return html;
   const prefix = base.slice(1).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   return html.replace(new RegExp(`\\b(href|src)="/(?!/|${prefix})`, 'g'), `$1="${base}`);
