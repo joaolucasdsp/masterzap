@@ -9,6 +9,8 @@
  *   const messages = await store.getMessages('martha-graeff', '2024-02-10');
  */
 
+import { withBase } from './base.js';
+
 /**
  * Simple LRU cache backed by a Map (insertion-order iteration).
  */
@@ -55,10 +57,10 @@ export class DataStore {
   /**
    * @param {object} options
    * @param {number} [options.cacheSize=30] - Max day-chunks to keep in LRU cache
-   * @param {string} [options.basePath='/data'] - Base path for data files
+   * @param {string} [options.basePath] - Base path for data files (default: /data under the site's base path)
    * @param {function} [options.fetcher] - Custom fetch function (for testing)
    */
-  constructor({ cacheSize = 30, basePath = '/data', fetcher } = {}) {
+  constructor({ cacheSize = 30, basePath = withBase('/data'), fetcher } = {}) {
     this._basePath = basePath;
     this._fetcher = fetcher || ((url) => fetch(url).then(r => {
       if (!r.ok) throw new Error(`HTTP ${r.status}: ${url}`);

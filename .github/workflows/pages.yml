@@ -1,0 +1,79 @@
+# Publishes the site on GitHub Pages at every push to main.
+#
+# Enable it once in the repository: Settings → Pages → Source: "GitHub Actions".
+# The site then lives at https://<owner>.github.io/<repo>/ — or at the root for
+# an <owner>.github.io repository. For a custom domain, set the repository
+# variable SITE_URL (Settings → Secrets and variables → Actions → Variables) to
+# the public URL and Pages to that domain; the build uses it for the base path,
+# canonical links, sitemap and robots.txt.
+name: GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Where the site will live
+        id: site
+        env:
+          SITE_URL_VAR: ${{ vars.SITE_URL }}
+        run: |
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          repo="${GITHUB_REPOSITORY#*/}"
+          if [ -n "$SITE_URL_VAR" ]; then
+            site="$SITE_URL_VAR"
+          elif [ "${repo,,}" = "$owner.github.io" ]; then
+            site="https://$owner.github.io"
+          else
+            site="https://$owner.github.io/$repo"
+          fi
+          echo "url=$site" >> "$GITHUB_OUTPUT"
+          echo "Site: $site"
+
+      - run: npm ci
+
+      - name: Build
+        env:
+          SITE_URL: ${{ steps.site.outputs.url }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+        run: npm run build
+
+      - run: npm test
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

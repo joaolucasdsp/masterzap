@@ -3,6 +3,8 @@
  * Reuses .search-toast CSS from chat.css.
  */
 
+import { withBase } from '../lib/base.js';
+
 /**
  * Show a toast notification.
  * @param {HTMLElement} container - element to append toast to
@@ -20,7 +22,7 @@ export function showToast(container, text, duration = 2500) {
   const logo = document.createElement('div');
   logo.className = 'search-toast-logo';
   const img = document.createElement('img');
-  img.src = '/assets/masterzap-logo.png';
+  img.src = withBase('/assets/masterzap-logo.png');
   img.alt = '';
   img.width = 28;
   img.height = 28;

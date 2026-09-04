@@ -30,6 +30,8 @@
  * exists, and every capture falls through to a download.
  */
 
+import { withBase } from './base.js';
+
 /** Loaded on demand: ~200 kB that only matters once someone asks for a print. */
 async function loadHtml2Canvas() {
   const { default: html2canvas } = await import('html2canvas');
@@ -169,7 +171,7 @@ function inlineStylesheets(clonedDoc) {
 export const ATTRIBUTION_BAR_HEIGHT = 44;
 const ATTRIBUTION_URL = 'www.masterwhats.com.br';
 const ATTRIBUTION_NAME = 'MasterWhats';
-const ATTRIBUTION_LOGO = '/assets/masterzap-logo.png';
+const ATTRIBUTION_LOGO = withBase('/assets/masterzap-logo.png');
 
 function loadImage(src) {
   return new Promise((resolve) => {

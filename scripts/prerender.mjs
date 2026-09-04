@@ -36,8 +36,12 @@ import {
   urlsIn, linksToMarkdown, linksToText, linksToHtml, escapeHtml,
   longDate, phonePretty, messageText, citationOf, messageUrl,
 } from './lib/corpus.mjs';
+import { BASE, rebaseHtml } from '../src/lib/base.js';
 
 const DIST = join(ROOT, 'dist');
+// Every page written here carries root-relative links; under a base path
+// (GitHub Pages) they need the prefix, same as Vite gives the app's own.
+const writeHtml = (path, html) => writeFileSync(path, rebaseHtml(html));
 const templatePath = join(DIST, 'index.html');
 if (!existsSync(templatePath)) {
   console.error('dist/index.html not found — run `vite build` first');
@@ -491,7 +495,7 @@ for (const entry of entries) {
   const who = whoIs(entry, profile);
   const dir = join(DIST, 'chat', entry.id);
   mkdirSync(dir, { recursive: true });
-  writeFileSync(join(dir, 'index.html'), conversationPage(entry, messages, profile, who));
+  writeHtml(join(dir, 'index.html'), conversationPage(entry, messages, profile, who));
 
   let months = null;
   if (isPaged(entry)) {
@@ -499,7 +503,7 @@ for (const entry of entries) {
     const yms = [...months.keys()];
     yms.forEach((ym, i) => {
       mkdirSync(join(dir, ym), { recursive: true });
-      writeFileSync(join(dir, ym, 'index.html'), monthPage(entry, who, ym, months.get(ym), yms[i - 1], yms[i + 1]));
+      writeHtml(join(dir, ym, 'index.html'), monthPage(entry, who, ym, months.get(ym), yms[i - 1], yms[i + 1]));
     });
   }
   built.push({ entry, who, profile, months });
@@ -515,11 +519,11 @@ for (const person of PEOPLE) {
   }
   const dir = join(DIST, 'quem', person.slug);
   mkdirSync(dir, { recursive: true });
-  writeFileSync(join(dir, 'index.html'), personPage(person, mentions));
+  writeHtml(join(dir, 'index.html'), personPage(person, mentions));
   people.push({ person, mentions });
   console.log(`quem/${person.slug}/ — ${[...mentions.values()].reduce((n, v) => n + v.length, 0)} menções`);
 }
-writeFileSync(join(DIST, 'quem', 'index.html'), peopleIndex(people));
+writeHtml(join(DIST, 'quem', 'index.html'), peopleIndex(people));
 
 // The sizes the index quotes decide whether a crawler downloads a file. They
 // are stamped from the files themselves rather than typed and forgotten.
@@ -529,4 +533,19 @@ const stampSizes = (text) => text.replace(/(masterwhats(?:-export)?\.(?:md|json|
 writeFileSync(join(DIST, 'llms.txt'), stampSizes(readFileSync(join(DIST, 'llms.txt'), 'utf-8')));
 writeFileSync(join(DIST, 'llms-full.txt'), stampSizes(llmsFull(built, people)));
 writeFileSync(join(DIST, 'sitemap.xml'), sitemap(built, people));
+
+// ── static hosting (GitHub Pages) ──────────────────────────────────────────
+// Vercel gets the same from vercel.json: every unknown path opens the app, and
+// /data/source/<pdf> goes to the bytes on GitHub. Pages has no rewrites, so the
+// app page doubles as 404.html and carries that one redirect; the files in
+// public/ that name the host or the root are re-pointed at SITE and BASE.
+const rawRepo = REPO.startsWith('https://github.com/') ? REPO.replace('https://github.com/', 'https://raw.githubusercontent.com/') + '/main' : null;
+const notFound = template.replace('</head>', (rawRepo ? `<script>(function(){var p=location.pathname,i=p.indexOf('/data/source/');if(i>=0)location.replace(${JSON.stringify(rawRepo)}+p.slice(i));})();</script>\n` : '') + '</head>');
+writeFileSync(join(DIST, '404.html'), notFound);
+writeFileSync(join(DIST, '.nojekyll'), '');
+writeFileSync(join(DIST, 'robots.txt'), readFileSync(join(DIST, 'robots.txt'), 'utf-8').replaceAll('https://www.masterwhats.com.br', SITE));
+const manifest = JSON.parse(readFileSync(join(DIST, 'site.webmanifest'), 'utf-8'));
+manifest.start_url = BASE;
+for (const icon of manifest.icons) icon.src = BASE + icon.src.replace(/^\/+/, '');
+writeFileSync(join(DIST, 'site.webmanifest'), JSON.stringify(manifest, null, 2) + '\n');
 console.log(`\nDone! ${built.length} conversations, ${people.length} people, llms-full.txt, sitemap.xml → ${DIST}`);

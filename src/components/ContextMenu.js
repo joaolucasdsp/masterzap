@@ -8,6 +8,7 @@
 import { escapeHtml, formatDateLong, formatTime } from '../lib/utils.js';
 import { showToast } from './Toast.js';
 import { ICON_COPY, ICON_SEND, ICON_INFO } from '../lib/icons.js';
+import { BASE } from '../lib/base.js';
 
 /**
  * Create and manage a context menu for the chat area.
@@ -101,8 +102,8 @@ export function attachContextMenu(chatContainer, { senderNames = {}, incomingSen
         label: 'Compartilhar texto',
         icon: ICON_SEND,
         action: () => {
-          const baseUrl = window.location.origin;
-          const shareUrl = `${baseUrl}/#/chat/${conversationId}/msg/${msg.id}`;
+          const baseUrl = window.location.origin + BASE;
+          const shareUrl = `${baseUrl}#/chat/${conversationId}/msg/${msg.id}`;
           const senderDisplay = senderNames[msg.sender] || msg.sender || '';
           const shareText = msg.content ? `"${msg.content}" — ${senderDisplay}` : '';
 

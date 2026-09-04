@@ -42,7 +42,7 @@ O nome do repositório — **masterzap** — é uma referência ao projeto origi
 | **Build** | Vite |
 | **Dados** | 66.387 mensagens em 24 conversas, divididas em arquivos JSON por data |
 | **Carregamento** | Lazy loading com cache LRU por dia |
-| **Deploy** | Vercel com headers de segurança (HSTS, CSP, X-Frame-Options) |
+| **Deploy** | Vercel com headers de segurança (HSTS, CSP, X-Frame-Options); ou GitHub Pages via Actions |
 | **SEO** | Open Graph, Twitter Cards, JSON-LD, sitemap |
 
 ## Como Rodar Localmente
@@ -88,6 +88,26 @@ Tudo que o site mostra sai limpo, sem precisar do site:
 - **Por URL** — `/export/masterwhats-<conversa>.md`, `/export/masterwhats-<conversa>.json`, `/export/masterwhats.md`, `/export/masterwhats.json`, `/export/masterwhats-export.zip`.
 
 O `.md` se explica sozinho: proveniência (fonte, documento e seu sha256, período, fuso), quem é o contato com fontes, e as mensagens dia a dia — as do relatório da PF citam `laudo p. N, fig. M`. O `.json` traz os mesmos metadados e perfil, mais todas as mensagens com os campos originais e `timestamp` com fuso (`-03:00`). Gerado no build por `scripts/export.mjs`, que importa os perfis do próprio app para não descolar.
+
+## Publicar no GitHub Pages
+
+O repositório traz um workflow ([`.github/workflows/pages.yml`](.github/workflows/pages.yml)) que faz o build e publica no GitHub Pages a cada push em `main`. Para ligar, uma vez:
+
+1. No repositório, **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+2. Faça um push em `main` (ou rode o workflow em **Actions → GitHub Pages → Run workflow**).
+
+O site sobe em `https://<usuario>.github.io/<repositorio>/`. O workflow descobre esse endereço sozinho e passa ao build como `SITE_URL`; dele saem o prefixo de caminho (`/<repositorio>/`) para todo asset, dado e link, e o host das URLs canônicas, do `sitemap.xml` e do `robots.txt`. Num repositório `<usuario>.github.io` o site fica na raiz.
+
+**Domínio próprio:** configure-o em Pages e crie a variável de repositório `SITE_URL` (**Settings → Secrets and variables → Actions → Variables**) com a URL pública, por exemplo `https://exemplo.com.br`.
+
+Para reproduzir o build localmente:
+
+```bash
+SITE_URL=https://<usuario>.github.io/<repositorio> npm run build
+SITE_URL=https://<usuario>.github.io/<repositorio> npx vite preview   # abre em /<repositorio>/
+```
+
+O que o Pages não tem e o Vercel tinha ([`vercel.json`](vercel.json)) o build repõe: `dist/404.html` é a página do app, então qualquer caminho desconhecido abre o site, e `/data/source/<pdf>` redireciona para os bytes no GitHub. Os cabeçalhos de segurança e o `Cache-Control` do Vercel não têm equivalente no Pages.
 
 ## Limitações Conhecidas
 

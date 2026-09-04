@@ -3,6 +3,8 @@
  * All icons are 24x24 unless noted. Use with innerHTML (static content).
  */
 
+import { withBase } from './base.js';
+
 export const ICON_SEARCH = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 10.816C3 14.4639 5.96807 17.4319 9.61597 17.4319C11.0585 17.4319 12.3768 16.9677 13.4628 16.1883L17.5419 20.2757C17.7326 20.4663 17.9813 20.5575 18.2466 20.5575C18.8103 20.5575 19.2 20.1347 19.2 19.5792C19.2 19.3139 19.1005 19.0735 18.9264 18.8994L14.8723 14.8204C15.7262 13.7094 16.2319 12.3249 16.2319 10.816C16.2319 7.16808 13.2639 4.20001 9.61597 4.20001C5.96807 4.20001 3 7.16808 3 10.816ZM4.41771 10.816C4.41771 7.9474 6.74739 5.61772 9.61597 5.61772C12.4845 5.61772 14.8142 7.9474 14.8142 10.816C14.8142 13.6846 12.4845 16.0142 9.61597 16.0142C6.74739 16.0142 4.41771 13.6846 4.41771 10.816Z"/></svg>`;
 
 export const ICON_SEND = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M20.9439 11.0862C21.7357 11.4382 21.7357 12.5619 20.9439 12.9139L6.65169 19.2659C5.93332 19.5852 5.14443 18.9889 5.2556 18.2107L5.89042 13.7669C5.95492 13.3155 6.31669 12.9648 6.76994 12.9145L15 12L6.76994 11.0856C6.31669 11.0352 5.95492 10.6846 5.89042 10.2331L5.2556 5.78934C5.14443 5.01112 5.93333 4.41483 6.65169 4.7341L20.9439 11.0862Z"/></svg>`;
@@ -25,6 +27,6 @@ export const ICON_MEETBALL = `<svg viewBox="0 0 24 24" width="20" height="20" fi
 
 export const ICON_CHEVRON_DW = `<svg viewBox="0 0 12 12" width="12" height="12" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.4242 3.57576C10.6586 3.81007 10.6586 4.18997 10.4242 4.42429L6.42424 8.42429C6.18992 8.6586 5.81003 8.6586 5.57571 8.42429L1.57571 4.42429C1.3414 4.18997 1.3414 3.81007 1.57571 3.57576C1.81003 3.34145 2.18993 3.34145 2.42424 3.57576L5.99998 7.1515L9.57571 3.57576C9.81003 3.34145 10.1899 3.34145 10.4242 3.57576Z"/></svg>`;
 
-export const ICON_MASTERZAP_LOGO = `<img src="/assets/masterzap-logo.png" width="20" height="20" alt="" style="vertical-align:middle;" />`;
+export const ICON_MASTERZAP_LOGO = `<img src="${withBase('/assets/masterzap-logo.png')}" width="20" height="20" alt="" style="vertical-align:middle;" />`;
 
 export const ICON_DOWNLOAD = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4 17.5v1a1.5 1.5 0 0 0 1.5 1.5h13a1.5 1.5 0 0 0 1.5-1.5v-1"/></svg>`;

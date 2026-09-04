@@ -6,6 +6,7 @@
  * Security note: innerHTML used only for static SVG. All dynamic content
  * uses ProfileSections with parseLinks from static content files.
  */
+import { withBase } from '../lib/base.js';
 import { SETTINGS_CONTENT, SETTINGS_CREDITS } from '../lib/settings-content.js';
 import { SOURCES } from '../lib/profile-content.js';
 import { renderProfileSections } from './ProfileSections.js';
@@ -56,7 +57,7 @@ export function showSettingsDrawer(container, { onClose, actions = {} } = {}) {
   logoSection.className = 'settings-logo-section';
 
   const logoImg = document.createElement('img');
-  logoImg.src = '/assets/masterzap-logo.png';
+  logoImg.src = withBase('/assets/masterzap-logo.png');
   logoImg.alt = 'MasterWhats';
   logoImg.className = 'settings-logo-img';
   logoImg.width = 80;

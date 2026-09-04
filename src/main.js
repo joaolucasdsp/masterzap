@@ -1,6 +1,7 @@
 // MasterWhats — WhatsApp-like web viewer
 // Entry point — initializes the app layout
 
+import { withBase } from './lib/base.js';
 import { getDataStore } from './lib/data-store.js';
 import { HashRouter } from './lib/router.js';
 import { renderSidebar, setActiveConversation } from './components/Sidebar.js';
@@ -65,24 +66,24 @@ async function init() {
   // Contacts with a photograph. Everyone else falls back to the generated
   // coloured avatar in lib/avatar.js, keyed by conversation id.
   const AVATARS = {
-    'martha-graeff': '/assets/avatar-martha-graeff.jpeg',
-    'alexandre-de-moraes': '/assets/avatar-alexandre-de-moraes.jpg',
-    'fabio-faria': '/assets/avatar-fabio-faria.jpg',
-    'vivi-moraes': '/assets/avatar-vivi-moraes.jpg',
-    'ciro-soares': '/assets/avatar-ciro-soares.jpg',
-    'geraldo-brazil-journal': '/assets/avatar-geraldo-brazil-journal.jpg',
-    'fabiano-zettel': '/assets/avatar-fabiano-zettel.jpg',
-    'marcio-conjur': '/assets/avatar-marcio-conjur.jpg',
-    'diretor-paulo-sergio-bacen': '/assets/avatar-diretor-paulo-sergio-bacen.jpg',
-    'leo-palhares': '/assets/avatar-leo-palhares.jpg',
-    'marcos-prime': '/assets/avatar-marcos-prime.jpg',
-    'thatiane-prime': '/assets/avatar-thatiane-prime.jpg',
-    'leo-serrano': '/assets/avatar-leo-serrano.jpg',
-    'stella-vorcaro': '/assets/avatar-stella-vorcaro.jpg',
-    'luiz-renno': '/assets/avatar-luiz-renno.jpg',
-    'ana-matos-mkt': '/assets/avatar-ana-matos-mkt.jpg',
+    'martha-graeff': withBase('/assets/avatar-martha-graeff.jpeg'),
+    'alexandre-de-moraes': withBase('/assets/avatar-alexandre-de-moraes.jpg'),
+    'fabio-faria': withBase('/assets/avatar-fabio-faria.jpg'),
+    'vivi-moraes': withBase('/assets/avatar-vivi-moraes.jpg'),
+    'ciro-soares': withBase('/assets/avatar-ciro-soares.jpg'),
+    'geraldo-brazil-journal': withBase('/assets/avatar-geraldo-brazil-journal.jpg'),
+    'fabiano-zettel': withBase('/assets/avatar-fabiano-zettel.jpg'),
+    'marcio-conjur': withBase('/assets/avatar-marcio-conjur.jpg'),
+    'diretor-paulo-sergio-bacen': withBase('/assets/avatar-diretor-paulo-sergio-bacen.jpg'),
+    'leo-palhares': withBase('/assets/avatar-leo-palhares.jpg'),
+    'marcos-prime': withBase('/assets/avatar-marcos-prime.jpg'),
+    'thatiane-prime': withBase('/assets/avatar-thatiane-prime.jpg'),
+    'leo-serrano': withBase('/assets/avatar-leo-serrano.jpg'),
+    'stella-vorcaro': withBase('/assets/avatar-stella-vorcaro.jpg'),
+    'luiz-renno': withBase('/assets/avatar-luiz-renno.jpg'),
+    'ana-matos-mkt': withBase('/assets/avatar-ana-matos-mkt.jpg'),
     // The chat Vorcaro kept with himself — his own photo, as WhatsApp shows it.
-    'dv-self': '/assets/avatar-dv.jpg',
+    'dv-self': withBase('/assets/avatar-dv.jpg'),
   };
   const SENDER_NAMES = { 'DV': 'Daniel Vocaro' };
   // Per-conversation media tallies come from conversations.json (built by
@@ -466,7 +467,7 @@ async function init() {
 
   const navRail = renderNavRail(container, {
     onCalls: () => router.navigate('calls'),
-    avatarSrc: '/assets/avatar-dv.jpg',
+    avatarSrc: withBase('/assets/avatar-dv.jpg'),
     onSettings: openSettings,
     onChat: () => {
       // From the calls screen, this is the way back to the list.
@@ -524,7 +525,7 @@ async function init() {
   let callsPromise = null;
   router.on('calls', async () => {
     showEmptyState();
-    callsPromise ??= fetch('/data/calls.json').then(r => r.json()).then(d => d.calls);
+    callsPromise ??= fetch(withBase('/data/calls.json')).then(r => r.json()).then(d => d.calls);
     let calls = [];
     try { calls = await callsPromise; } catch { callsPromise = null; }
     const panel = renderCallsPanel({

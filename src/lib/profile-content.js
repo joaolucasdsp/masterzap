@@ -14,9 +14,11 @@
  * index — see scripts/split_data.py.
  */
 
+import { withBase } from './base.js';
+
 export const VORCARO_PROFILE = {
   name: 'Daniel Vorcaro',
-  avatar: '/assets/avatar-dv.jpg',
+  avatar: withBase('/assets/avatar-dv.jpg'),
   phone: '+55 31 9XXXX-XXXX',
   sections: [
     {
