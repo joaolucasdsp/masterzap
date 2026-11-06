@@ -24,3 +24,6 @@ coverage/
 test-results/
 playwright-report/
 .vercel
+
+# Engineering harness working files
+.engineering/work/
