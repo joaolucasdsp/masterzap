@@ -190,6 +190,7 @@ carry no analytics.
 | Item | Value |
 |---|---|
 | CI on every change | missing (`pages.yml` builds and runs unit tests only on push to `main`, then deploys) |
+| Merge gate (required checks and reviewers, resolved threads, stale approvals dismissed) | missing: `main` has no branch protection, ruleset, or CODEOWNERS (checked 2026-11-13) |
 | Hosting / provider | GitHub Pages for this fork (`https://joaolucasdsp.github.io/masterzap/`, built by `.github/workflows/pages.yml`); upstream deploys `www.masterwhats.com.br` on Vercel (`vercel.json`) |
 | Environments | production only |
 | Staging gate | missing |
